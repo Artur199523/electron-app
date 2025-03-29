@@ -1,14 +1,21 @@
 import osUtils from 'os-utils';
 import fs from "fs";
 import os from "os"
+import {BrowserWindow} from "electron";
 
-const POOLING_INTERVAL = 5000000;
+const POOLING_INTERVAL = 500;
 
-export function pollResources() {
+export function pollResources(mainWindow: BrowserWindow) {
     setInterval(async () => {
         const cpuUsage = await getCpuUsage()
         const ramUsage = getRamUsage()
         const storageData = getStorageData()
+
+        mainWindow.webContents.send("statistics",{
+            cpuUsage,
+            ramUsage,
+            storageUsage: storageData.usage,
+        })
     }, POOLING_INTERVAL)
 }
 
@@ -33,7 +40,7 @@ function getStorageData() {
     }
 }
 
-function getStaticData() {
+export function getStaticData() {
     const totalStorage = getStorageData().total
     const cpuModel = os.cpus()[0].model
     const totalMemoryGB = Math.floor(osUtils.totalmem() / 1024)
