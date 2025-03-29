@@ -1,0 +1,23 @@
+{
+  "appId": "com.arthur.electron-course",
+  "icon": "./desktopIcon.png",
+  "files": [
+    "dist-electron",
+    "dist-react"
+  ],
+  "extraResources": ["dist-electron/preload.cjs"],
+  "mac": {
+    "target": "dmg"
+  },
+  "linux": {
+    "target": "AppImage",
+    "category": "Utility"
+  },
+  "win": {
+    "target": [
+      "portable",
+      "msi"
+    ],
+    "forceCodeSigning": false
+  }
+}
