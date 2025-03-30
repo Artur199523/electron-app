@@ -1,5 +1,5 @@
 type Statistics = {
-    cpuUsage: never,
+    cpuUsage: number,
     ramUsage: number,
     storageUsage: number,
 }

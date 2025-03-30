@@ -1,7 +1,9 @@
 import osUtils from 'os-utils';
 import fs from "fs";
 import os from "os"
+
 import {BrowserWindow} from "electron";
+import {ipcWebContentSen} from "./util.js";
 
 const POOLING_INTERVAL = 500;
 
@@ -11,7 +13,7 @@ export function pollResources(mainWindow: BrowserWindow) {
         const ramUsage = getRamUsage()
         const storageData = getStorageData()
 
-        mainWindow.webContents.send("statistics",{
+        ipcWebContentSen("statistics", mainWindow.webContents, {
             cpuUsage,
             ramUsage,
             storageUsage: storageData.usage,
@@ -19,7 +21,7 @@ export function pollResources(mainWindow: BrowserWindow) {
     }, POOLING_INTERVAL)
 }
 
-function getCpuUsage() {
+function getCpuUsage(): Promise<number> {
     return new Promise(resolve => {
         osUtils.cpuUsage(resolve)
     })
