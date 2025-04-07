@@ -1,7 +1,9 @@
-import {app, BrowserWindow} from "electron"
-import {ipcMainHandle, isDev} from "./util.js";
+import {app, BrowserWindow, Tray} from "electron"
+import path from "path";
+
+import {getAssetsPath, getPreloadPath, getUIPath} from "./pathResolver.js";
 import {getStaticData, pollResources} from "./resourceManager.js";
-import {getPreloadPath, getUIPath} from "./pathResolver.js";
+import {ipcMainHandle, isDev} from "./util.js";
 
 app.on("ready", () => {
     const mainWindow = new BrowserWindow({
@@ -21,4 +23,7 @@ app.on("ready", () => {
     ipcMainHandle('getStaticData', () => {
         return getStaticData()
     })
+
+    // for macOS we need to use another image and for that we can add this => process.platform === 'darwin' ? {macOS.png} : {Windows.png}
+    new Tray(path.join(getAssetsPath(), 'desktopIcon.png'))
 })
