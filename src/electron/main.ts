@@ -1,9 +1,9 @@
-import {app, BrowserWindow, Tray} from "electron"
-import path from "path";
+import {app, BrowserWindow} from "electron"
 
-import {getAssetsPath, getPreloadPath, getUIPath} from "./pathResolver.js";
 import {getStaticData, pollResources} from "./resourceManager.js";
+import {getPreloadPath, getUIPath} from "./pathResolver.js";
 import {ipcMainHandle, isDev} from "./util.js";
+import {createTray} from "./tray.js";
 
 app.on("ready", () => {
     const mainWindow = new BrowserWindow({
@@ -24,6 +24,30 @@ app.on("ready", () => {
         return getStaticData()
     })
 
-    // for macOS we need to use another image and for that we can add this => process.platform === 'darwin' ? {macOS.png} : {Windows.png}
-    new Tray(path.join(getAssetsPath(), 'desktopIcon.png'))
+    createTray(mainWindow)
+    handleCloseEvent(mainWindow)
 })
+
+function handleCloseEvent(mainWindow: BrowserWindow) {
+    let willClose = false;
+
+    mainWindow.on('close', (e) => {
+        if (willClose) {
+            return;
+        }
+        e.preventDefault()
+        mainWindow.hide()
+
+        if (app.dock) {
+            app.dock.hide()
+        }
+    })
+
+    app.on('before-quit', () => {
+        willClose = true;
+    })
+
+    mainWindow.on('show', () => {
+        willClose = false;
+    })
+}
