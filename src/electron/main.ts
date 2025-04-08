@@ -1,9 +1,13 @@
-import {app, BrowserWindow} from "electron"
+import {app, BrowserWindow, Menu} from "electron"
 
 import {getStaticData, pollResources} from "./resourceManager.js";
 import {getPreloadPath, getUIPath} from "./pathResolver.js";
 import {ipcMainHandle, isDev} from "./util.js";
 import {createTray} from "./tray.js";
+import {createMenu} from "./menu.js";
+
+// This will hide the menu bar at all
+// Menu.setApplicationMenu(null)
 
 app.on("ready", () => {
     const mainWindow = new BrowserWindow({
@@ -26,6 +30,7 @@ app.on("ready", () => {
 
     createTray(mainWindow)
     handleCloseEvent(mainWindow)
+    createMenu(mainWindow)
 })
 
 function handleCloseEvent(mainWindow: BrowserWindow) {
